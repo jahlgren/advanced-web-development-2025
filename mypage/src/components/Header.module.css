@@ -1,0 +1,39 @@
+.header {
+  height: 80px;
+  background-color: #111111;
+  color: white;
+}
+.header > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+}
+
+.header nav ul {
+  display: flex;
+  list-style: none;
+}
+.header nav ul li {
+  padding-left: 2rem;
+}
+.header nav ul li:first-child {
+  padding-left: 0;
+}
+.header nav a {
+  color: white;
+  text-decoration: none;
+}
+.header nav a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 500px) {
+  .header {
+    height: unset;
+    padding: 1rem 0.5rem;
+  }
+  .header > div {
+    flex-direction: column;
+  }
+}

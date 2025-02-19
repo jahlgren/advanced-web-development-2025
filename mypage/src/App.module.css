@@ -1,0 +1,29 @@
+.main {
+  padding: 2rem 0;
+  background-color: white;
+}
+
+.main > * {
+  margin-bottom: 2rem;
+}
+.main > *:not(:last-child) {
+  padding-bottom: 2rem;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.25);
+}
+
+.main h2, .main h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem 0;
+  line-height: 1;
+}
+.main h3 {
+  font-size: 1.5rem;
+}
+
+.main p {
+  margin-bottom: 1rem;
+}
+.main p:last-child {
+  margin-bottom: 0;
+}
