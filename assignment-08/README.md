@@ -72,6 +72,12 @@ The backend uses an SQLite database to store quotes. The database will be create
 
 ## Technologies Used
 
-- Frontend: React
-- Backend: Express
-- Database: SQLite
+**- Frontend:**
+   - React
+   - React Query
+   - Bootstrap
+
+**- Backend:**
+   - Express
+   - Sequelize (SQLite)
+   
