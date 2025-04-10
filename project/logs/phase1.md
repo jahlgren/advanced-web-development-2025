@@ -143,7 +143,7 @@ This time tracking web application is built using **Next.js**, a full-stack Reac
 
 The frontend is styled using **Tailwind CSS**, a utility-first CSS framework, and enhanced with **shadcn/ui** components for clean, accessible UI elements. These tools streamline the design process and maintain consistency across the app.
 
-For data persistence, the app uses **PostgreSQL** as the primary database, with **Sequelize ORM** handling model definitions and structured database queries.
+For data persistence, the app uses **PostgreSQL** as the primary database, with **Drizzle ORM** handling model definitions and structured database queries.
 
 **Better Auth** is used for authentication, offering secure and efficient user login and registration handling. The app is deployed to an **AWS EC2** instance, providing full control over the environment and flexibility for future scaling.
 
@@ -157,7 +157,7 @@ For data persistence, the app uses **PostgreSQL** as the primary database, with 
 
 * **[PostgreSQL](https://www.postgresql.org)** – Relational database for storing users, projects, and time entries.
 
-* **[Sequelize](https://sequelize.org)** – ORM used to manage models, migrations, and database interactions.
+* **[Drizzle](https://orm.drizzle.team/)** – ORM used to manage models, migrations, and database interactions.
 
 * **[Better Auth](https://www.better-auth.com)** – Handles secure authentication, login, and session management.
 
