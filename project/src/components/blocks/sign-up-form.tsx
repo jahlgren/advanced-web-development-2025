@@ -11,42 +11,31 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { FormEvent, useEffect, useState } from "react"
-import Link from "next/link";
-import { Spinner } from "../ui/spinner";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import { AlertCircle } from "lucide-react";
+import { FormEvent, useState } from "react"
+import { toast } from "sonner";
+import { Link } from "../ui/link";
 
 export type SignUpFormCallback = (name: string, email: string, password: string) => void;
 
 export function SignUpForm({
   className,
   onSignUp,
-  pending,
-  error,
+  isPending,
   ...props
 }: React.ComponentPropsWithoutRef<"div"> & {
   onSignUp: SignUpFormCallback,
-  pending?: boolean,
-  error?: string
+  isPending?: boolean
 }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [retypePassword, setRetypePassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState(error);
-
-  useEffect(() => {
-    setErrorMessage(error);
-  }, [error]);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if(password !== retypePassword) {
-      setErrorMessage('Passwords mismatch.')
-    }
-    else {
-      setErrorMessage(error);
+      toast.error('Passwords mismatch', { duration: 2000 });
+      return;
     }
     onSignUp(name, email, password);
   }
@@ -74,7 +63,7 @@ export function SignUpForm({
                   required
                   onChange={e => setName(e.target.value)}
                   value={name}
-                  disabled={pending}
+                  disabled={isPending}
                 />
               </div>
               <div className="grid gap-2">
@@ -86,7 +75,7 @@ export function SignUpForm({
                   required
                   onChange={e => setEmail(e.target.value)}
                   value={email}
-                  disabled={pending}
+                  disabled={isPending}
                 />
               </div>
               <div className="grid gap-2">
@@ -97,7 +86,7 @@ export function SignUpForm({
                   required
                   onChange={e => setPassword(e.target.value)}
                   value={password} 
-                  disabled={pending}
+                  disabled={isPending}
                   minLength={8}
                 />
               </div>
@@ -109,25 +98,15 @@ export function SignUpForm({
                   required
                   onChange={e => setRetypePassword(e.target.value)}
                   value={retypePassword} 
-                  disabled={pending}
+                  disabled={isPending}
                   minLength={8}
                 />
               </div>
-              {errorMessage ? (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    {errorMessage}
-                  </AlertDescription>
-                </Alert>
-                ) : undefined}
-              <Button type="submit" className="w-full" disabled={pending}>
-                {pending ? <Spinner /> : "Sign Up"}
-              </Button>
+              <Button type="submit" className="w-full" isPending={isPending}>Sign up</Button>
             </div>
             <div className="mt-4 text-center text-sm">
               Do you already have an account?{" "}
-              <Link href="/" className="underline underline-offset-4">Sign In</Link>
+              <Link variant="primary" href="/" >Sign in</Link>
             </div>
           </form>
         </CardContent>

@@ -2,26 +2,27 @@
 
 import { SignUpForm } from "@/components/blocks/sign-up-form";
 import { signUp } from "@/lib/auth-client";
-import { redirect } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
+import { useRouter } from 'next/navigation';
 
 export default function SignUpPage() {
 
   const [pending, setPending] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
   
+  const router = useRouter();
+
   const onSignUp = async (name: string, email: string, password: string) => {
     setPending(true);
-    setErrorMessage('');
 
     const {error} = await signUp.email({name, email, password});
 
     if(error) {
-      setErrorMessage(error.message || 'Something went wrong');
+      toast.error(error.message || 'Something went wrong', {duration: 2000});
       setPending(false);
     }
     else {
-      redirect('/dashboard');
+      router.push('/dashboard');
     }
   }
 
@@ -30,8 +31,7 @@ export default function SignUpPage() {
       <SignUpForm 
         className="m-auto w-full max-w-sm" 
         onSignUp={onSignUp} 
-        pending={pending}
-        error={errorMessage}
+        isPending={pending}
       />
     </div>
   );

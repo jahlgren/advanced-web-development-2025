@@ -11,32 +11,23 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { FormEvent, useEffect, useState } from "react"
-import Link from "next/link";
-import { Spinner } from "../ui/spinner";
-import { Alert, AlertDescription } from "../ui/alert";
-import { AlertCircle } from "lucide-react";
+import { FormEvent, useState } from "react"
+import { Link } from "../ui/link";
 
 export type SignInFormCallback = (email: string, password: string) => void;
 
 export function SignInForm({
   className,
   onSignIn,
-  pending,
-  error,
+  isPending,
   ...props
 }: React.ComponentPropsWithoutRef<"div"> & {
   onSignIn: SignInFormCallback,
-  pending?: boolean,
+  isPending?: boolean,
   error?: string
 }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState(error);
-  
-  useEffect(() => {
-    setErrorMessage(error);
-  }, [error]);
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -67,7 +58,7 @@ export function SignInForm({
                   required
                   onChange={e => setEmail(e.target.value)}
                   value={email}
-                  disabled={pending}
+                  disabled={isPending}
                 />
               </div>
               <div className="grid gap-2">
@@ -88,24 +79,14 @@ export function SignInForm({
                   required
                   onChange={e => setPassword(e.target.value)}
                   value={password} 
-                  disabled={pending}
+                  disabled={isPending}
                 />
               </div>
-              {errorMessage ? (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    {errorMessage}
-                  </AlertDescription>
-                </Alert>
-                ) : undefined}
-              <Button type="submit" className="w-full" disabled={pending}>
-                {pending ? <Spinner /> : "Sign in"}
-              </Button>
+              <Button type="submit" className="w-full" isPending={isPending}>Sign in</Button>
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}
-              <Link href="/register" className="underline underline-offset-4">Sign up</Link>
+              <Link variant="primary" href="/register">Sign up</Link>
             </div>
           </form>
         </CardContent>

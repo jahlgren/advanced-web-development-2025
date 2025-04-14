@@ -1,34 +1,25 @@
 "use client";
 
+import ProjectList from "@/components/blocks/project-list";
+import { showCreateProjectModal } from "@/components/modals/create-project-modal";
 import { Button } from "@/components/ui/button";
-import { signOut, useSession } from "@/lib/auth-client";
-import { redirect } from "next/navigation";
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
-  
-  const { 
-    data: session, 
-    isPending,
-    error,
-    refetch
-  } = useSession();
 
-  console.log(session);
+  const router = useRouter();
 
-  const onSignOut = async () => {
-    await signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          redirect('/');
-        },
-      }
-    });
+  const onProjectSelect = (id: string) => {
+    router.push('/dashboard/projects/' + id);
   }
 
   return (
-    <div>
-      Dashboard
-      <Button onClick={onSignOut}>Sign out</Button>
-    </div>
+    <>
+      <Button variant="unstyled"
+        className="mb-6 w-full h-12 border-dashed border-2 border-black/20 text-foreground/60 hover:text-primary hover:border-primary hover:bg-primary/5"
+        onClick={showCreateProjectModal}
+      >Create a new project...</Button>
+      <ProjectList onProjectSelect={onProjectSelect} />
+    </>
   );
 }

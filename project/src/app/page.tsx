@@ -1,34 +1,51 @@
 "use client";
 
 import { SignInForm } from "@/components/blocks/sign-in-form";
-import { signIn } from "@/lib/auth-client";
-import { redirect } from "next/navigation";
-import { useState } from "react";
+import { Spinner } from "@/components/ui/spinner";
+import { signIn, useSession } from "@/lib/auth-client";
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function SignInPage() {
   
   const [pending, setPending] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+
+  const {data: session, isPending} = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if(session && session.user && session.session && !isPending) {
+      router.push('/dashboard');
+    }
+  }, [session, isPending])
+
 
   const onSignIn = async (email: string, password: string) => {
     setPending(true);
-    setErrorMessage('');
+    const toastId = toast.loading('Signing in...');
 
     const {error} = await signIn.email({email, password});
     console.log(error);
 
     if(error) {
-      setErrorMessage(error.message || 'Something went wrong');
+      toast.error('Failed to sign in', {
+        id: toastId,
+        duration: 2000,
+        description: error.message || 'Something went wrong'
+      });
       setPending(false);
     }
     else {
-      redirect('/dashboard');
+      toast.dismiss(toastId);
     }
   };
 
   return (
     <div className="flex w-full h-screen p-6 bg-slate-100">
-      <SignInForm className="m-auto w-full max-w-sm" onSignIn={onSignIn} pending={pending} error={errorMessage} />
+      {(isPending || (session && session.user)) ? <Spinner /> : (
+        <SignInForm className="m-auto w-full max-w-sm" onSignIn={onSignIn} isPending={pending} />
+      )}
     </div>
   );
 }
