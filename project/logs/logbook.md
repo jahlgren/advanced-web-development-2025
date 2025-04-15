@@ -13,3 +13,4 @@
 | 2025-04-12 | 5 | Implemented toasts (Sonner). Project list and project page. |
 | 2025-04-13 | 4 | Worked on timelogs. |
 | 2025-04-14 | 4 | Continued working on time logs. It is now possible to add and edit timelogs per project. |
+| 2025-04-15 | 2 | Timelogs and project stats. |
