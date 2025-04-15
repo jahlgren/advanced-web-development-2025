@@ -1,6 +1,7 @@
 "use client";
 
 import TimeLogs from '@/components/blocks/time-logs';
+import { TimeSpentBlock } from '@/components/blocks/time-spent';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/components/ui/link';
 import { PendingWrapper } from '@/components/ui/pending-wrapper';
@@ -33,6 +34,7 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
         </div>
         <Button variant="outline" size="icon"><Pencil /></Button>
       </div>
+      <TimeSpentBlock projectId={id} />
       {data && (
         <TimeLogs project={data!} />
       )}

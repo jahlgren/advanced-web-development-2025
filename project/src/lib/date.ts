@@ -22,13 +22,19 @@ export function timeBetween(start: Date | string, end: Date | string): string {
   const diffMs = endDate.getTime() - startDate.getTime();
   const totalSeconds = Math.floor(diffMs / 1000);
   const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const minutes = (totalSeconds % 3600) / 60;
   const seconds = totalSeconds % 60;
 
   const parts: string[] = [];
-  if (hours) parts.push(`${hours} h`);
-  if (minutes) parts.push(`${minutes} min`);
-  if (hours < 1) parts.push(`${seconds} sec`);
+  if (hours > 0) {
+    parts.push(`${hours} h`);
+    if(minutes > 0)
+      parts.push(`${(Math.ceil(minutes))} min`);
+  }
+  else {
+    if (minutes > 0) parts.push(`${(minutes)} min`);
+    if (seconds > 0) parts.push(`${seconds} sec`);
+  }
 
   return parts.join(' ');
 }

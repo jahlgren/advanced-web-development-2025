@@ -55,6 +55,7 @@ export function DateTimePicker({ value, disabled, preventClear, onChange }: Date
       const combined = new Date(selected)
       combined.setHours(hours)
       combined.setMinutes(minutes)
+      combined.setSeconds(0, 0);
       onChange(combined)
     } else {
       onChange(null)
@@ -109,7 +110,6 @@ export function DateTimePicker({ value, disabled, preventClear, onChange }: Date
           mode="single"
           selected={date}
           onSelect={handleDateChange}
-          initialFocus
           required={preventClear}
           disabled={disabled}
         />
