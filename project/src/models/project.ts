@@ -1,5 +1,6 @@
 import { pgTable, text, varchar, timestamp } from "drizzle-orm/pg-core";
 import { user } from "./user";
+import { InferSelectModel } from "drizzle-orm";
 
 export const project = pgTable("project", {
   id: text("id").primaryKey(),
@@ -8,3 +9,5 @@ export const project = pgTable("project", {
   description: text("description"),
   createdAt: timestamp('created_at').notNull()
 });
+
+export type Project = InferSelectModel<typeof project>;

@@ -1,92 +1,174 @@
 import { NextResponse } from 'next/server';
-import cuid from 'cuid';
 import db from '@/lib/db';
 import { withAuth } from '@/lib/auth';
-import { CreateTimeLogSchema } from '@/form-schemas/create-time-log-schema';
-import { timelog } from '@/models/timelog';
-import { project } from '@/models/project';
-import { and, desc, eq } from 'drizzle-orm';
-import { Timelog } from '@/lib/types';
+import { Timelog, timelog } from '@/models/timelog';
+import { and, desc, eq, isNotNull, isNull } from 'drizzle-orm';
 import { category } from '@/models/category';
+import { project } from '@/models/project';
+import { createId } from '@paralleldrive/cuid2';
+import { CreateTimelogSchema } from '@/form-schemas/create-timelog.schema';
 
-export type GetTimelogResponse = Timelog[];
-export type GetTimelogResponseError = { error: string };
 
-export type PostTimelogResponse = Timelog;
-export type PostTimelogResponseError = { error: string };
+const PAGE_SIZE = 10;
 
-const generalError = 'You are not authorized to perform this action';
-const generalErrorStatus = 403;
 
+/**
+ * Gets timelog history.
+ */
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  console.log("GEETE TIMELOGSSS")
   return withAuth(async (session) => {
     const { id: projectId } = await params;
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "1");
 
-    if (!projectId) {
-      console.log("Project id missing");
-      return NextResponse.json<GetTimelogResponseError>({ error: generalError }, { status: generalErrorStatus });
+    // Check that page numer is correctly given.
+    if (isNaN(page) || page < 1) {
+      return NextResponse.json({ error: "Invalid page number" }, { status: 400 });
     }
 
-    try {
-      const projectRecord = await db.select().from(project).where(eq(project.id, projectId)).limit(1).execute();
+    const offset = (page - 1) * PAGE_SIZE;
 
-      if (projectRecord.length === 0 || projectRecord[0].userId !== session.user.id) {
-        return NextResponse.json<GetTimelogResponseError>({ error: generalError }, { status: generalErrorStatus });
-      }
+    try {
+      // Validate that the project belongs to the user.
+      const projectRecord = await db
+        .select()
+        .from(project)
+        .where(
+          and(eq(project.id, projectId), eq(project.userId, session.user.id))
+        )
+        .limit(1)
+        .then((res) => res[0]);
       
-      const timelogs = await db.select().from(timelog).where(eq(timelog.projectId, projectId)).orderBy(desc(timelog.start)).execute();
-      return NextResponse.json<GetTimelogResponse>(timelogs, { status: 200 });
-    } catch (error) {
-      console.error("Error fetching timelogs:", error);
-      return NextResponse.json<GetTimelogResponseError>({ error: 'Failed to get timelogs' }, { status: 500 });
+      if(!projectRecord || projectRecord.userId !== session.user.id) {
+        return NextResponse.json(
+          { error: "Project not found" },
+          { status: 404 }
+        );
+      }
+
+      // Get the timelogs.
+      const logs = await db
+        .select({
+          id: timelog.id,
+          projectId: timelog.projectId,
+          description: timelog.description,
+          start: timelog.start,
+          end: timelog.end,
+          categoryId: timelog.categoryId,
+          categoryName: category.name
+        })
+        .from(timelog)
+        .leftJoin(category, eq(timelog.categoryId, category.id))
+        .where(
+          and(
+            eq(timelog.projectId, projectId),
+            isNotNull(timelog.end)
+          )
+        )
+        .orderBy(desc(timelog.start))
+        .limit(PAGE_SIZE + 1)
+        .offset(offset);
+
+        
+      const hasNextPage = logs.length > PAGE_SIZE;
+      const trimmedLogs = hasNextPage ? logs.slice(0, PAGE_SIZE) : logs;
+      
+      return NextResponse.json({
+        data: trimmedLogs,
+        nextPage: hasNextPage ? page + 1 : null,
+      });
+    } catch (err) {
+      console.error("Error fetching timelogs: ", err instanceof Error ? err.message : err);
+      return NextResponse.json(
+        { error: "Internal server error" },
+        { status: 500 }
+      );
     }
   });
 }
 
+
+/**
+ * Starts a new active timelog.
+ */
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return withAuth(async (session) => {
     const { id: projectId } = await params;
-    try {
-      const body = await req.json();
-      const parsed = CreateTimeLogSchema.safeParse(body);
-      if (!parsed.success) {
-        return NextResponse.json<PostTimelogResponseError>({ error: parsed.error.errors[0].message }, { status: 400 });
-      }
-
-      const data = parsed.data;
-      
-      const projectRecord = await db.select().from(project).where(eq(project.id, projectId)).limit(1).execute();
-
-      if (!projectRecord.length) {
-        return NextResponse.json<PostTimelogResponseError>({ error: generalError }, { status: generalErrorStatus });
-      }
-
-      if (projectRecord[0].userId !== session.user.id) {
-        return NextResponse.json<PostTimelogResponseError>({ error: generalError }, { status: generalErrorStatus });
-      }
-
-      const categoryRecord = await db.select().from(category)
-        .where(and(eq(category.id, data.categoryId), eq(category.projectId, projectId)))
-        .limit(1).execute();
     
-      if (!categoryRecord.length) {
-        return NextResponse.json<PostTimelogResponseError>({ error: generalError }, { status: generalErrorStatus });
+    // Validate that project id is given.
+    // However, this should never happen.
+    if (!projectId) {
+      console.log("Project id missing");
+      return NextResponse.json({ error: "Project id missing." }, { status: 400 });
+    }
+
+    // Validate input data.
+    const body = await req.json();
+    const parsed = CreateTimelogSchema.safeParse(body);
+    if(!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.errors[0]?.message ?? "Invalid input" },
+        { status: 422 }
+      );
+    }
+    const data = parsed.data;
+
+    try {
+      // Check that the project belongs to the user.
+      const projectRecord = await db
+        .select().from(project)
+        .where(and(eq(project.id, projectId), eq(project.userId, session.user.id)))
+        .limit(1);
+
+      if (projectRecord.length !== 1) {
+        return NextResponse.json(
+          { error: "Project not found" },
+          { status: 404 }
+        );
       }
 
-      const result = await db.insert(timelog).values({
-        id: cuid(),
-        projectId,
-        categoryId: data.categoryId,
-        description: data.description,
-        start: new Date(data.start),
-        end: data.end ? new Date(data.end) : null,
-        createdAt: new Date()
-      }).returning();
-  
-      return NextResponse.json<PostTimelogResponse>(result[0], { status: 201 });
-    } catch (error) {
-      console.error(error);
-      return NextResponse.json<PostTimelogResponseError>({ error: 'Failed to create timelog' }, { status: 500 });
+      // Check for active timelog (no end time)
+      const active = await db
+        .select()
+        .from(timelog)
+        .where(
+          and(
+            eq(timelog.projectId, projectId),
+            isNull(timelog.end)
+          )
+        )
+        .limit(1);
+
+      if (active.length > 0) {
+        return NextResponse.json(
+          { error: "An active timelog already exists." },
+          { status: 404 }
+        );
+      }
+      
+      // Create new timelog
+      const newLog = await db
+        .insert(timelog)
+        .values({
+          id: createId(),
+          projectId,
+          categoryId: data.categoryId,
+          description: data.description,
+          start: data.start ? new Date(data.start) : new Date(),
+          end: data.end ? new Date(data.end) : null,
+          createdAt: new Date()
+        })
+        .returning()
+        .then(res => res[0]);
+
+      return NextResponse.json<Timelog>(newLog, { status: 201 });
+    } catch (err) {
+      console.error("Error creating project: ", err instanceof Error ? err.message : err);
+      return NextResponse.json(
+        { error: "Internal server error" },
+        { status: 500 }
+      );
     }
   });
 }

@@ -45,6 +45,7 @@ function Button({
   asChild = false,
   isPending,
   children,
+  disabled,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
@@ -56,7 +57,8 @@ function Button({
   return (
     <Comp
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(buttonVariants({ variant, size, className }), {'text-foreground/0': isPending})}
+      disabled={disabled||isPending}
       {...props}
     >{children}{ isPending ? <Spinner className="absolute" /> : undefined }</Comp>
   )

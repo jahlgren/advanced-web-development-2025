@@ -12,7 +12,7 @@ export default function DashboardLayout({
     <div className="m-6">
       <Container>
         <Header />
-        <main>
+        <main className="space-y-6">
           {children}
         </main>
       </Container>

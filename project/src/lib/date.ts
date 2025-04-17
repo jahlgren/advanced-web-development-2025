@@ -29,11 +29,11 @@ export function timeBetween(start: Date | string, end: Date | string): string {
   if (hours > 0) {
     parts.push(`${hours} h`);
     if(minutes > 0)
-      parts.push(`${(Math.ceil(minutes))} min`);
+      parts.push(`${(Math.ceil(minutes))} m`);
   }
   else {
-    if (minutes > 0) parts.push(`${(minutes)} min`);
-    if (seconds > 0) parts.push(`${seconds} sec`);
+    if (Math.floor(minutes) > 0) parts.push(`${(Math.floor(minutes))} m`);
+    if (seconds > 0 || minutes < 1) parts.push(`${seconds} s`);
   }
 
   return parts.join(' ');

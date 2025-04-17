@@ -14,3 +14,5 @@
 | 2025-04-13 | 4 | Worked on timelogs. |
 | 2025-04-14 | 4 | Continued working on time logs. It is now possible to add and edit timelogs per project. |
 | 2025-04-15 | 2 | Timelogs and project stats. |
+| 2025-04-16 | 4 | Refactoring. |
+| 2025-04-17 | 5 | Refactoring & implemented feature to delete timelogs. |

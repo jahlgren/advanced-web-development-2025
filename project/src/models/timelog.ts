@@ -1,6 +1,7 @@
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { project } from "./project";
 import { category } from "./category";
+import { InferSelectModel } from "drizzle-orm";
 
 export const timelog = pgTable("timelog", {
   id: text("id").primaryKey(),
@@ -11,3 +12,5 @@ export const timelog = pgTable("timelog", {
   end: timestamp('emd'),
   createdAt: timestamp('created_at').notNull()
 });
+
+export type Timelog = InferSelectModel<typeof timelog>;
