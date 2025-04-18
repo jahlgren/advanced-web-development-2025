@@ -6,12 +6,17 @@ import { eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { verifyProjectOwnership } from "../../utils";
 
+
 export type TimelogCategoryStats = {
   categoryId: string,
   categoryName: string,
   totalSeconds: number
 }
 
+
+/** 
+ * Retrieves aggregated statistics (total time spent) for the specified project’s timelogs.
+ */
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return withAuth(async (session) => {
     const { id: projectId } = await params;

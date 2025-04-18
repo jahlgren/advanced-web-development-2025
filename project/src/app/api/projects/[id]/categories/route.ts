@@ -2,12 +2,15 @@ import { CreateCategoriesSchema } from "@/form-schemas/create-categories-schema"
 import { withAuth } from "@/lib/auth";
 import db from "@/lib/db";
 import { Category, category } from "@/models/category";
-import { project } from "@/models/project";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { verifyProjectOwnership } from "../utils";
 import { createId } from "@paralleldrive/cuid2";
 
+
+/** 
+ * Retrieves all categories associated with the specified project for the authenticated user.
+ */
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return withAuth(async (session) => {
     const { id: projectId } = await params;
@@ -20,17 +23,10 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     try {
-      // Check that the project belongs the user.
-      const projectRecord = await db
-        .select().from(project)
-        .where(and(eq(project.id, projectId), eq(project.userId, session.user.id)))
-        .limit(1);
-
-      if (projectRecord.length !== 1) {
-        return NextResponse.json(
-          { error: "Project not found" },
-          { status: 404 }
-        );
+      // Verify project ownership.
+      const ownership = await verifyProjectOwnership(projectId, session.user.id);
+      if(!ownership.ok) {
+        return ownership.response;
       }
 
       // Get categories
@@ -51,6 +47,10 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   });
 }
 
+
+/** 
+ * Adds new category entries to the specified project. 
+ */
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return withAuth(async (session) => {
     const { id: projectId } = await params;

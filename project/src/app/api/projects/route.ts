@@ -7,6 +7,10 @@ import { category } from "@/models/category";
 import { desc, eq } from "drizzle-orm";
 import { createId } from '@paralleldrive/cuid2';
 
+
+/** 
+ * Retrieves all projects belonging to the authenticated user. 
+ */
 export async function GET() {
   return withAuth(async (session) => {
     try {
@@ -27,9 +31,13 @@ export async function GET() {
   });
 }
 
+/** 
+ * Creates a new project associated with the authenticated user. 
+ */
 export async function POST(req: Request) {
   return withAuth(async (session) => {
     try {
+      // Validate input.
       const body = await req.json();
       const parsed = CreateProjectSchema.safeParse(body);
       if(!parsed.success) {
@@ -39,7 +47,7 @@ export async function POST(req: Request) {
         );
       }
       const data = parsed.data;
-
+      
       const result = await db.transaction(async (trx) => {
         const inserted = await trx.insert(project).values({
           id: createId(),

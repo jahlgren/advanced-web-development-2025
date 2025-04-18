@@ -3,7 +3,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
@@ -63,7 +62,7 @@ export function UserDropdown({ user, onLogout }: UserDropdownProps) {
 
 export function Header(props: {}) {
   
-  const {data: session, isPending} = useSession();
+  const {data: session} = useSession();
   const router = useRouter();
 
   const onLogout = async () => {

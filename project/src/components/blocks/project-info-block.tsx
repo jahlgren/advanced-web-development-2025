@@ -6,7 +6,13 @@ import { Skeleton } from "../ui/skeleton";
 import { Error } from "../ui/error";
 import { showUpdateProjectInfoModal } from "../modals/update-project-info-modal";
 import { useProjectInfoQuery } from "@/queries/use-project-info-query";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "../ui/dropdown-menu";
 import { useCategoriesQuery } from "@/queries/use-categories-query";
 import { showCreateCategoriesModal } from "../modals/create-categories-modal";
 import { showUpdateCategoryModal } from "../modals/update-category-modal";

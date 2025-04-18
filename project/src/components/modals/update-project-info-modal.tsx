@@ -14,7 +14,7 @@ import { Textarea } from '../ui/textarea';
 import { Spinner } from '../ui/spinner';
 import { useUpdateProjectInfoMutation } from '@/mutations/use-update-project-info-mutatin';
 import { useProjectInfoQuery } from '@/queries/use-project-info-query';
-import { Delete, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { useDeleteProjectMutation } from '@/mutations/use-delete-project-mutation';
 import { useRouter } from 'next/navigation';
 

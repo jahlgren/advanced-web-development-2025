@@ -1,11 +1,14 @@
 import { withAuth } from "@/lib/auth";
 import db from "@/lib/db";
-import { project } from "@/models/project";
 import { NextResponse } from "next/server";
 import { and, eq, isNull } from "drizzle-orm";
 import { Timelog, timelog } from "@/models/timelog";
 import { verifyProjectOwnership } from "../../utils";
 
+
+/**
+ * Retrieves the currently active (ongoing) timelog for the specified project. 
+ */
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return withAuth(async (session) => {
     const { id: projectId } = await params;

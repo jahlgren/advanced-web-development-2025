@@ -6,8 +6,10 @@ import { withAuth } from "@/lib/auth";
 import { UpdateProjectInfoSchema } from "@/form-schemas/update-project-info-schema";
 import { verifyProjectOwnership } from "./utils";
 
-export type GetProjectByIdResponse = Project;
 
+/** 
+ * Retrieves a specific project by ID for the authenticated user.
+ */
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   return withAuth(async (session) => {
     const { id } = await params;
@@ -27,7 +29,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         );
       }
 
-      return NextResponse.json<GetProjectByIdResponse>(result);
+      return NextResponse.json<Project>(result);
     } catch (err) {
       console.error("Error fetching project: ", err instanceof Error ? err.message : err);
       return NextResponse.json(
@@ -39,6 +41,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 }
 
 
+/** 
+ * Updates the details of a specific project owned by the authenticated user.
+ */
 export async function PUT(
   req: Request,
   { params }: { params: Promise<{ id: string; timelogId: string }> }
@@ -102,6 +107,9 @@ export async function PUT(
 }
 
 
+/** 
+ * Deletes a specific project owned by the authenticated user.
+ */
 export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ id: string; timelogId: string }> }

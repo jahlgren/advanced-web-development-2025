@@ -7,13 +7,14 @@ import { category } from '@/models/category';
 import { project } from '@/models/project';
 import { createId } from '@paralleldrive/cuid2';
 import { CreateTimelogSchema } from '@/form-schemas/create-timelog.schema';
+import { verifyProjectOwnership } from '../utils';
 
 
 const PAGE_SIZE = 10;
 
 
-/**
- * Gets timelog history.
+/** 
+ * Retrieves the history of timelogs for a specific project owned by the authenticated user. 
  */
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return withAuth(async (session) => {
@@ -29,21 +30,10 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     const offset = (page - 1) * PAGE_SIZE;
 
     try {
-      // Validate that the project belongs to the user.
-      const projectRecord = await db
-        .select()
-        .from(project)
-        .where(
-          and(eq(project.id, projectId), eq(project.userId, session.user.id))
-        )
-        .limit(1)
-        .then((res) => res[0]);
-      
-      if(!projectRecord || projectRecord.userId !== session.user.id) {
-        return NextResponse.json(
-          { error: "Project not found" },
-          { status: 404 }
-        );
+      // Verify project ownership.
+      const ownership = await verifyProjectOwnership(projectId, session.user.id);
+      if(!ownership.ok) {
+        return ownership.response;
       }
 
       // Get the timelogs.
@@ -88,8 +78,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 }
 
 
-/**
- * Starts a new active timelog.
+/** 
+ * Creates a new active (ongoing) timelog for the specified project.
  */
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return withAuth(async (session) => {
@@ -114,17 +104,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const data = parsed.data;
 
     try {
-      // Check that the project belongs to the user.
-      const projectRecord = await db
-        .select().from(project)
-        .where(and(eq(project.id, projectId), eq(project.userId, session.user.id)))
-        .limit(1);
-
-      if (projectRecord.length !== 1) {
-        return NextResponse.json(
-          { error: "Project not found" },
-          { status: 404 }
-        );
+      // Verify project ownership.
+      const ownership = await verifyProjectOwnership(projectId, session.user.id);
+      if(!ownership.ok) {
+        return ownership.response;
       }
 
       // Check for active timelog (no end time)

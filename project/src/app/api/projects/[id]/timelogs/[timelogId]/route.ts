@@ -2,10 +2,10 @@ import { eq, and } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { withAuth } from "@/lib/auth";
 import db from "@/lib/db";
-import { project } from "@/models/project";
 import { category } from "@/models/category";
 import { Timelog, timelog } from "@/models/timelog";
 import { UpdateTimeLogSchema } from "@/form-schemas/update-timelog-schema";
+import { verifyProjectOwnership } from "../../utils";
 
 type GetParamsReturnType = {
   valid: false,
@@ -48,6 +48,10 @@ async function getParams(
   return { valid: true, projectId, timelogId };
 }
 
+
+/** 
+ * Deletes the specified timelog for the given project.
+ */
 export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ id: string; timelogId: string }> }
@@ -61,17 +65,10 @@ export async function DELETE(
     }
 
     try {
-      // Check that the project belongs to the user.
-      const projectRecord = await db
-        .select().from(project)
-        .where(and(eq(project.id, projectId), eq(project.userId, session.user.id)))
-        .limit(1);
-
-      if (projectRecord.length !== 1) {
-        return NextResponse.json(
-          { error: "Project not found" },
-          { status: 404 }
-        );
+      // Verify project ownership.
+      const ownership = await verifyProjectOwnership(projectId, session.user.id);
+      if(!ownership.ok) {
+        return ownership.response;
       }
 
       const result = await db.delete(timelog).where(
@@ -100,6 +97,10 @@ export async function DELETE(
   });
 }
 
+
+/** 
+ * Updates the fields of a specific timelog entry for the given project.
+ */
 export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string; timelogId: string }> }
@@ -124,17 +125,10 @@ export async function PATCH(
     const data = parsed.data;
 
     try {
-      // Check that the project belongs to the user.
-      const projectRecord = await db
-        .select().from(project)
-        .where(and(eq(project.id, projectId), eq(project.userId, session.user.id)))
-        .limit(1);
-
-      if (projectRecord.length !== 1) {
-        return NextResponse.json(
-          { error: "Project not found" },
-          { status: 404 }
-        );
+      // Verify project ownership.
+      const ownership = await verifyProjectOwnership(projectId, session.user.id);
+      if(!ownership.ok) {
+        return ownership.response;
       }
 
       // Valiadte category.

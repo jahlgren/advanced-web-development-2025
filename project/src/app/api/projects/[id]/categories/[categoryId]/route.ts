@@ -48,6 +48,10 @@ async function getParams(
   return { valid: true, projectId, categoryId };
 }
 
+
+/**
+ * Updates an existing category for the specified project.
+ */
 export async function PUT(
   req: Request,
   { params }: { params: Promise<{ id: string; categoryId: string }> }
@@ -105,6 +109,11 @@ export async function PUT(
   });
 }
 
+
+/** 
+ * Deletes the specified category for the given project and 
+ * reassigns all its timelogs to a replacement category. 
+ */
 export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ id: string; categoryId: string }> }

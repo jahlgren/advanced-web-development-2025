@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { dateToHourMinuteSeconds, dateToYearMonthDay, timeBetween } from "@/lib/date";
 import { useTimeLogsInfiniteQuery } from "@/queries/use-timelog-infinite-query";
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "../ui/card";

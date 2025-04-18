@@ -21,7 +21,6 @@ type TimelogControlBlockProps = {
   projectId: string
 };
 
-
 function ActiveTimeCounter({start}: {start: Date}) {
   const [end, setEnd] = useState(new Date());
   useEffect(() => {
@@ -32,7 +31,6 @@ function ActiveTimeCounter({start}: {start: Date}) {
   }, [end.getTime()]);
   return <>{timeBetween(start, end)}</>
 }
-
 
 export function TimelogControlBlock({projectId}: TimelogControlBlockProps) {
 
