@@ -16,7 +16,6 @@ const PAGE_SIZE = 10;
  * Gets timelog history.
  */
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  console.log("GEETE TIMELOGSSS")
   return withAuth(async (session) => {
     const { id: projectId } = await params;
     const { searchParams } = new URL(req.url);

@@ -4,7 +4,9 @@ import { InferSelectModel } from "drizzle-orm";
 			
 export const category = pgTable("category", {
   id: text("id").primaryKey(),
-  projectId: text("project_id").notNull().references(() => project.id),
+  projectId: text("project_id").notNull().references(() => project.id, {
+    onDelete: 'cascade'
+  }),
   name: varchar("name", { length: 255 }).notNull(),
   createdAt: timestamp('created_at').notNull()
 });

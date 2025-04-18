@@ -7,9 +7,9 @@ async function fetchProject(projectId: string): Promise<GetProjectByIdResponse> 
   return response.data;
 }
 
-export function useProjectQuery(projectId: string) {
+export function useProjectInfoQuery(projectId: string) {
   return useQuery<GetProjectByIdResponse>({
-    queryKey: ["project", projectId],
+    queryKey: ["projects", projectId],
     queryFn: () => fetchProject(projectId),
     enabled: !!projectId,
     staleTime: 60 * 1000,

@@ -1,14 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { httpGet } from "@/lib/http";
-import { GetProjectsResponse } from "@/app/api/projects/route";
+import { Project } from "@/models/project";
 
-async function fetchProjects(): Promise<GetProjectsResponse> {
-  const response = await httpGet<GetProjectsResponse>("/projects");
+async function fetchProjects(): Promise<Project[]> {
+  const response = await httpGet<Project[]>("/projects");
   return response.data;
 }
 
 export function useProjectsQuery() {
-  return useQuery<GetProjectsResponse>({
+  return useQuery<Project[]>({
     queryKey: ["projects"],
     queryFn: fetchProjects,
     staleTime: 60 * 1000,

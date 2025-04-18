@@ -7,23 +7,20 @@ import { category } from "@/models/category";
 import { desc, eq } from "drizzle-orm";
 import { createId } from '@paralleldrive/cuid2';
 
-export type GetProjectsResponse = Project[];
-export type PostProjectResponse = Project;
-
 export async function GET() {
   return withAuth(async (session) => {
     try {
-      const projects: GetProjectsResponse = await db
+      const projects = await db
         .select()
         .from(project)
         .where(eq(project.userId, session.user.id))
         .orderBy(desc(project.createdAt));
 
-      return NextResponse.json<GetProjectsResponse>(projects);
+      return NextResponse.json<Project[]>(projects);
     } catch (err) {
       console.error("Error fetching projects: ", err instanceof Error ? err.message : err);
       return NextResponse.json(
-        { error: "Failed to fetch projects, server error." }, 
+        { error: "Internal server error" },
         { status: 500 }
       );
     }
@@ -65,11 +62,11 @@ export async function POST(req: Request) {
         return inserted[0];
       });
 
-      return NextResponse.json<PostProjectResponse>(result, { status: 201 });
+      return NextResponse.json<Project>(result, { status: 201 });
     } catch (err) {
       console.error("Error creating project: ", err instanceof Error ? err.message : err);
       return NextResponse.json(
-        { error: "Failed to create project, server error." },
+        { error: "Internal server error" },
         { status: 500 }
       );
     }

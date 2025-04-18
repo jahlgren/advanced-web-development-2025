@@ -1,11 +1,11 @@
 "use client"
 
-import { useProjectsQuery } from "@/queries/use-projects-query"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PendingWrapper } from "@/components/ui/pending-wrapper"
 import { useRouter } from "next/navigation"
 import { showCreateProjectModal } from "../modals/create-project-modal"
+import { useProjectsQuery } from "@/queries/use-projects-query"
 
 export function ProjectsBlock() {
   const { data, isPending, error } = useProjectsQuery()

@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const spinnerVariants = cva(
-  "rounded-full animate-spin",
+  "rounded-full animate-spin shrink-0 grow-0",
   {
     variants: {
       variant: {
@@ -18,7 +18,8 @@ const spinnerVariants = cva(
       }
     },
     defaultVariants: {
-      variant: "light"
+      variant: "light",
+      size: "default"
     },
   }
 )

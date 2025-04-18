@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 import { useCategoriesQuery } from "@/queries/use-categories-query";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Error } from "../ui/error";
 import { PendingWrapper } from "../ui/pending-wrapper";
 import { useCreateTimelogMutation } from "@/mutations/use-create-timelog-mutation";

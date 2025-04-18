@@ -6,25 +6,22 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from '../ui/button';
 import { useEffect, useState } from 'react';
 import { Textarea } from '../ui/textarea';
-import { useCreateProjectMutation } from '@/mutations/use-create-project-mutation';
+import { useCreateCategoriesMutation } from '@/mutations/use-create-categories-mutation';
 
-export const showCreateProjectModal = () => {
-  NiceModal.show(CreateProjectModal, {});
+export const showCreateCategoriesModal = (projectId: string) => {
+  NiceModal.show(CreateCategoriesModal, {projectId});
 }
 
-const CreateProjectModal = NiceModal.create(() => {
+const CreateCategoriesModal = NiceModal.create(({projectId}: {projectId: string}) => {
   
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
   const [categories, setCategories] = useState('');
 
   const modal = useModal();
-  const {mutate, isPending} = useCreateProjectMutation();
+  const {mutate, isPending} = useCreateCategoriesMutation();
 
   useEffect(() => {
     let timeout: NodeJS.Timeout|undefined;
@@ -45,7 +42,7 @@ const CreateProjectModal = NiceModal.create(() => {
       .map((c) => c.trim())
       .filter(Boolean);
 
-    const data = {title, description, categories: categoryArr};
+    const data = {projectId, categories: categoryArr};
     mutate(data, {
       onSuccess: () => {
         modal.hide();
@@ -58,32 +55,9 @@ const CreateProjectModal = NiceModal.create(() => {
       <DialogContent className="sm:max-w-[425px]" aria-describedby={undefined}>
         <form onSubmit={submit}>
           <DialogHeader>
-            <DialogTitle>Create a New Project</DialogTitle>
+            <DialogTitle>Create Categories</DialogTitle>
           </DialogHeader>
           <div className="my-6 flex flex-col gap-6">
-            <div className="grid gap-2">
-              <Label htmlFor="title" className="text-right">
-                Title
-              </Label>
-              <Input
-                id="title"
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-                disabled={isPending}
-                autoFocus
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="description" className="text-right">
-                Description
-              </Label>
-              <Textarea
-                id="description"
-                value={description}
-                onChange={e => setDescription(e.target.value)}
-                disabled={isPending}
-              />
-            </div>
             <div className="grid gap-2">
               <Label htmlFor="categories" className="text-right">
                 Categories
@@ -94,7 +68,7 @@ const CreateProjectModal = NiceModal.create(() => {
                 onChange={e => setCategories(e.target.value)}
                 disabled={isPending}
               />
-              <p className='italic tracking-tight text-sm text-foreground/50'>Enter categories as a comma-separated list (categories can also be added later.)</p>
+              <p className='italic tracking-tight text-sm text-foreground/50'>Enter new categories as a comma-separated list</p>
             </div>
           </div>
           <DialogFooter>
@@ -106,4 +80,4 @@ const CreateProjectModal = NiceModal.create(() => {
   );
 });
 
-export default CreateProjectModal;
+export default CreateCategoriesModal;
