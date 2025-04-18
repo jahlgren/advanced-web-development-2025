@@ -18,3 +18,4 @@
 | 2025-04-17 | 5 | Refactoring & implemented feature to delete timelogs. |
 | 2025-04-18 | 4 | Implemented feature to edit & delete project info & categories. |
 | 2025-04-18 | 1 | Code cleanup & README.md |
+| 2025-04-18 | 2 | phase2.md documentation |

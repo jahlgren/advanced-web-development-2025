@@ -50,55 +50,6 @@ async function getParams(
 
 
 /** 
- * Deletes the specified timelog for the given project.
- */
-export async function DELETE(
-  req: Request,
-  { params }: { params: Promise<{ id: string; timelogId: string }> }
-) {
-  return withAuth(async (session) => {
-    
-    // Validate params.
-    const { projectId, timelogId, ...paramsCheck} = await getParams(params);
-    if(!paramsCheck.valid)  {
-      return paramsCheck.response!;
-    }
-
-    try {
-      // Verify project ownership.
-      const ownership = await verifyProjectOwnership(projectId, session.user.id);
-      if(!ownership.ok) {
-        return ownership.response;
-      }
-
-      const result = await db.delete(timelog).where(
-        and(
-          eq(timelog.id, timelogId),
-          eq(timelog.projectId, projectId)
-        )
-      );
-
-      if(!result.rowCount) {
-        return NextResponse.json(
-          { error: "Timelog not found." },
-          { status: 400 }
-        )
-      }
-
-      return NextResponse.json({ok: true, timelogId}, { status: 200 });
-    }
-    catch (err) {
-      console.error("Error deleting timelog: ", err instanceof Error ? err.message : err);
-      return NextResponse.json(
-        { error: "Internal server error" },
-        { status: 500 }
-      );
-    }
-  });
-}
-
-
-/** 
  * Updates the fields of a specific timelog entry for the given project.
  */
 export async function PATCH(
@@ -169,6 +120,55 @@ export async function PATCH(
       return NextResponse.json<Timelog>(updated[0], { status: 200 });
     } catch (err) {
       console.error("Error updating timelog: ", err instanceof Error ? err.message : err);
+      return NextResponse.json(
+        { error: "Internal server error" },
+        { status: 500 }
+      );
+    }
+  });
+}
+
+
+/** 
+ * Deletes the specified timelog for the given project.
+ */
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id: string; timelogId: string }> }
+) {
+  return withAuth(async (session) => {
+    
+    // Validate params.
+    const { projectId, timelogId, ...paramsCheck} = await getParams(params);
+    if(!paramsCheck.valid)  {
+      return paramsCheck.response!;
+    }
+
+    try {
+      // Verify project ownership.
+      const ownership = await verifyProjectOwnership(projectId, session.user.id);
+      if(!ownership.ok) {
+        return ownership.response;
+      }
+
+      const result = await db.delete(timelog).where(
+        and(
+          eq(timelog.id, timelogId),
+          eq(timelog.projectId, projectId)
+        )
+      );
+
+      if(!result.rowCount) {
+        return NextResponse.json(
+          { error: "Timelog not found." },
+          { status: 400 }
+        )
+      }
+
+      return NextResponse.json({ok: true, timelogId}, { status: 200 });
+    }
+    catch (err) {
+      console.error("Error deleting timelog: ", err instanceof Error ? err.message : err);
       return NextResponse.json(
         { error: "Internal server error" },
         { status: 500 }
