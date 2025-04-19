@@ -203,7 +203,29 @@ The project follows a modular structure where code is organized to maintain scal
 
 ## 7. Code quality and documentation
 
-Add something
+In professional team-based development, **code reviews** are a crucial part of maintaining code quality. Since this project was developed solo, I used **AI-assisted code review** after implementing each major feature. Based on the suggestions, I made improvements and optimizations where appropriate.
+
+I follow the principle that **clean and readable code should be self-explanatory**, and therefore, I avoid adding unnecessary comments that might become outdated or misaligned with the actual logic. For example, consider the following code snippet which checks project ownership:
+
+```ts
+const ownership = await verifyProjectOwnership(projectId, session.user.id);
+if (!ownership.ok) {
+  return ownership.response;
+}
+```
+
+This logic is simple and clearly expresses its intent, eliminating the need for inline comments.
+
+However, I did add short and helpful comments where they genuinely add value, especially in more complex sections. Additionally, each API endpoint has a short descriptive comment explaining its purpose. For instance:
+
+```ts
+/**
+ * Retrieves a specific project by ID for the authenticated user.
+ */
+export async function GET(...) { ... }
+```
+
+This balance between clear code and minimal yet useful documentation ensures the project is maintainable and easy to understand without being cluttered.
 
 ## 8. Testing and error handling
 
