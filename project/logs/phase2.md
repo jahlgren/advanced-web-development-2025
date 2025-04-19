@@ -260,7 +260,7 @@ Due to time constraints and the short project deadline, I was not able to cover 
 
 The automated test results are shown in the screenshot below:
 
-<img alt="Jest test result" src="assets/tests-screehnot.png" width="333">
+<img alt="Jest test result" src="assets/tests-screehnot.png" width="666">
 
 ### Error handling
 
@@ -308,4 +308,4 @@ The application emphasizes clarity and ease of use. Key actions such as starting
 
 Below is a short animation showcasing the core flow of the application's user interface and how the main features come together:
 
-<img alt="UI Gif" src="assets/ui-anim.gif" width="440">
+<img alt="UI Gif" src="assets/ui-anim.gif" width="880">
