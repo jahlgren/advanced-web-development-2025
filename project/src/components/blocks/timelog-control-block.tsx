@@ -142,7 +142,7 @@ export function TimelogControlBlock({projectId}: TimelogControlBlockProps) {
               onValueChange={value => setCategory(value)}
               disabled={isPending || isPendingStart}
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full" data-testid="category-select-trigger">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
@@ -164,6 +164,7 @@ export function TimelogControlBlock({projectId}: TimelogControlBlockProps) {
               placeholder="What are you working on?"
               className="resize-none"
               disabled={isPending || isPendingStart}
+              data-testid="description-textarea"
             />
           </div>
 

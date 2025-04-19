@@ -229,8 +229,83 @@ This balance between clear code and minimal yet useful documentation ensures the
 
 ## 8. Testing and error handling
 
-Add something
+### Testing
+
+To ensure the core features of the application work correctly, I performed manual testing across all critical flows, including:
+
+* User registration and login
+* Creating, updating, and deleting projects
+* Starting, updating, and stopping active timelogs
+* Creating, editing, and deleting historical timelogs
+
+Each of these features was tested step-by-step to confirm expected behavior, and all tests passed successfully.
+
+In addition to manual testing, I implemented automated tests using [**Jest**](https://jestjs.io/) for two key components: `CreateProjectModal` and `TimelogControlBlock`. These components were chosen as they encapsulate important user flows and interactions. The tests help demonstrate how test cases can be structured and extended to other parts of the application.
+
+Due to time constraints and the short project deadline, I was not able to cover all components with automated tests. However, the included test cases serve as a good reference for how one could scale up test coverage in a larger production environment.
+
+#### **Features Covered by Automated Tests**
+
+**CreateProjectModal**
+
+* Allows user to fill in the form and submit successfully
+
+**TimelogControlBlock**
+
+* Renders without crashing
+* Disables the "Start" button when no category is selected
+* Allows selecting a category and entering a description
+* Calls the start mutation when the "Start" button is clicked
+* Calls the update mutation when the "Stop" button is clicked
+
+The automated test results are shown in the screenshot below:
+
+![Jest test result](assets/tests-screehnot.png){ width=666 }
+
+### Error handling
+
+Error handling is implemented in every API route via `try/catch` blocks: any unexpected errors are caught, logged, and result in a consistent JSON error response. Incoming request bodies are validated against Zod schemas, which automatically return a 422 Invalid input error with a clear validation message.
+
+This is an example route:
+
+```ts
+/** 
+ * Retrieves all projects belonging to the authenticated user. 
+ */
+export async function GET() {
+  // withAuth checks that the user is signed in.
+  // If the user is not signed in, a 401 response is returned.
+  return withAuth(async (session) => {
+    try {
+      const projects = await db
+        .select()
+        .from(project)
+        .where(eq(project.userId, session.user.id))
+        .orderBy(desc(project.createdAt));
+
+      return NextResponse.json<Project[]>(projects);
+    } catch (err) {
+      console.error(
+        "Error fetching projects: ", 
+        err instanceof Error ? err.message : err
+      );
+      return NextResponse.json(
+        { error: "Internal server error" },
+        { status: 500 }
+      );
+    }
+  });
+}
+```
 
 ## 9. User interface and interaction
 
-Add something
+The user interface is built using **shadcn/ui** components combined with **Tailwind CSS** for styling. This approach ensures a modern, responsive, and accessible design system that's easy to scale and customize.
+
+All interactive elements like buttons, inputs, modals, and dropdowns follow consistent styling and behavior patterns provided by shadcn/ui. Tailwind utility classes are used extensively to fine-tune layout, spacing, and visual details.
+
+The application emphasizes clarity and ease of use. Key actions such as starting/stopping timelogs, managing projects, and navigating between sections are accessible with minimal friction.
+
+Below is a short animation showcasing the core flow of the application's user interface and how the main features come together:
+
+![UI Gif](assets/ui-anim.gif){ width=880 }

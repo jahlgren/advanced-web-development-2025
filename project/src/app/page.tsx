@@ -3,6 +3,7 @@
 import { SignInForm } from "@/components/blocks/sign-in-form";
 import { Spinner } from "@/components/ui/spinner";
 import { signIn, useSession } from "@/lib/auth-client";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -13,9 +14,11 @@ export default function SignInPage() {
 
   const {data: session, isPending} = useSession();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if(session && session.user && session.session && !isPending) {
+      queryClient.clear();
       router.push('/dashboard');
     }
   }, [session, isPending])

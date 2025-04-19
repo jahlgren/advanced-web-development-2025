@@ -19,3 +19,4 @@
 | 2025-04-18 | 4 | Implemented feature to edit & delete project info & categories. |
 | 2025-04-18 | 1 | Code cleanup & README.md |
 | 2025-04-18 | 2 | phase2.md documentation |
+| 2025-04-19 | 4 | Automated tests & phase2.md documentation |

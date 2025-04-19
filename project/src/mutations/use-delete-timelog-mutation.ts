@@ -23,7 +23,7 @@ export const useDeleteTimelogMutation = () => {
     },
 
     onSuccess: (_, __, context) => {
-      queryClient.invalidateQueries({ queryKey: ["timelogs", _.projectId] });
+      queryClient.invalidateQueries({ queryKey: ["timelogs", __.projectId] });
       toast.success('Timelog deleted successfully!', {
         id: context.toastId,
         duration: 2000

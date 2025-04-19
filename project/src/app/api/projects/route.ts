@@ -12,6 +12,8 @@ import { createId } from '@paralleldrive/cuid2';
  * Retrieves all projects belonging to the authenticated user. 
  */
 export async function GET() {
+  // withAuth checks that the user is signed in.
+  // If the user is not signed in, a 401 response is returned.
   return withAuth(async (session) => {
     try {
       const projects = await db

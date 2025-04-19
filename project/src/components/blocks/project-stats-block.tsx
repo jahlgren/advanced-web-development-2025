@@ -23,7 +23,11 @@ export function ProjectStatsBlock({ projectId }: ProjectStatsBlockProps) {
   const { data, isPending, error } = useProjectTimelogStatsQuery(projectId);
 
   const chartConfig: ChartConfig = useMemo(() => {
-    const temp: ChartConfig = {};
+    const temp: ChartConfig = {
+      hours: {
+        label: "Hours Spent",
+      }
+    };
     if(data) {
       for(let i = 0; i < data.length; i++) {
         temp[data[i].categoryId] = {
@@ -41,7 +45,7 @@ export function ProjectStatsBlock({ projectId }: ProjectStatsBlockProps) {
 
     return data.map((v, i) => ({
       category: v.categoryId,
-      hours: Math.ceil((v.totalSeconds / 3600)*10)/10,
+      hours: Math.ceil((v.totalSeconds / 3600)*100)/100,
       fill: colors[i % colors.length]
     }));
   }, [data]);
@@ -66,7 +70,7 @@ export function ProjectStatsBlock({ projectId }: ProjectStatsBlockProps) {
               <PieChart>
                 <ChartTooltip
                   cursor={false}
-                  content={<ChartTooltipContent hideLabel />}
+                  content={<ChartTooltipContent labelKey="hours" />}
                 />
                 <Pie
                   data={chartData}
