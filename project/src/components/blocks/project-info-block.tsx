@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { dateToYearMonthDay } from "@/lib/date";
 import { Button } from "../ui/button";

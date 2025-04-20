@@ -1,3 +1,5 @@
+"use client";
+
 import { signOut, useSession } from "@/lib/auth-client"
 import {
   DropdownMenu,
@@ -13,6 +15,7 @@ import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Spinner } from "../ui/spinner";
 import { Skeleton } from "../ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 type UserDropdownProps = {
   user?: {
@@ -68,15 +71,15 @@ export function Header(props: {}) {
 
   const queryClient = useQueryClient();
 
+  useEffect(() => {
+    if(!session || !session.user) {
+      queryClient.clear();
+      router.push('/');
+    }
+  }, [session, session?.user])
+
   const onLogout = async () => {
-    await signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          queryClient.clear();
-          router.push('/');
-        },
-      }
-    });
+    await signOut();
   }
 
   return (

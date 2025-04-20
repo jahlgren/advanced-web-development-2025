@@ -8,6 +8,10 @@ The project is deployed as a [**Node.js**](https://nodejs.org/en) server using [
 
 The project is hosted on an [**AWS EC2 instance**](https://aws.amazon.com/pm/ec2). Due to cost-saving measures, the container may not be running at all times and might be started only when needed. This means the application could experience some downtime when the container is not running.
 
+The app is available here:
+
+[http://ec2-13-60-203-139.eu-north-1.compute.amazonaws.com:3000](http://ec2-13-60-203-139.eu-north-1.compute.amazonaws.com:3000/)
+
 ## 2. Backend
 
 The backend of this project is built using **Next.js**, which serves as both the web framework for the frontend and the API server. Next.js provides an efficient way to implement API routes that handle all the backend functionality of the application. These API routes are used for authentication, project management, timelog tracking, and category management.
